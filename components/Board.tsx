@@ -36,7 +36,6 @@ const Board = () => {
       const columns = Array.from(board.columns);
       const startColIndex = columns[Number(source.droppableId)];
       const finishColIndex = columns[Number(destination.droppableId)];
-      console.log(source, destination);
 
       const startCol: Column = {
         id: startColIndex[0],
