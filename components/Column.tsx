@@ -2,6 +2,9 @@ import { Draggable, Droppable } from "react-beautiful-dnd";
 import TodoCard from "./TodoCard";
 import { PlusCircleIcon } from "@heroicons/react/24/solid";
 import { useBoardStore } from "@/store/BoardStore";
+import { useState } from "react";
+import AddCardModal from "./AddCardModal";
+import { useModalStore } from "@/store/ModalStore";
 
 type Props = {
   id: TypedColumn;
@@ -19,81 +22,88 @@ const idToColumnText: {
 
 const Column = ({ id, todos, index }: Props) => {
   const [searchString] = useBoardStore((state) => [state.searchString]);
+  const [handleOpenModal] = useModalStore((state) => [state.handleOpenModal]);
 
   return (
-    <Draggable draggableId={id} index={index}>
-      {(provided) => (
-        <div
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          ref={provided.innerRef}
-        >
-          {/* render droppable todos in the column */}
-          <Droppable droppableId={index.toString()} type="card">
-            {(provided, snapshot) => (
-              <div
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-                className={`p-2 rounded-2xl shadow-sm ${
-                  snapshot.isDraggingOver ? "bg-green-200" : "bg-white/50"
-                }`}
-              >
-                <h2 className="flex justify-between font-bold text-xl pb-1">
-                  {idToColumnText[id]}
-                  <span className="text-gray-500 bg-gray-200 rounded-full px-2 py-1 text-sm font-normal">
-                    {!searchString
-                      ? todos.length
-                      : todos.filter((todo) =>
-                          todo.title
-                            .toLowerCase()
-                            .includes(searchString.toLowerCase())
-                        ).length}
-                  </span>
-                </h2>
+    <>
+      <AddCardModal />
+      <Draggable draggableId={id} index={index}>
+        {(provided) => (
+          <div
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            ref={provided.innerRef}
+          >
+            {/* render droppable todos in the column */}
+            <Droppable droppableId={index.toString()} type="card">
+              {(provided, snapshot) => (
+                <div
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                  className={`p-2 rounded-2xl shadow-sm ${
+                    snapshot.isDraggingOver ? "bg-green-200" : "bg-white/50"
+                  }`}
+                >
+                  <h2 className="flex justify-between font-bold text-xl pb-1">
+                    {idToColumnText[id]}
+                    <span className="text-gray-500 bg-gray-200 rounded-full px-2 py-1 text-sm font-normal">
+                      {!searchString
+                        ? todos.length
+                        : todos.filter((todo) =>
+                            todo.title
+                              .toLowerCase()
+                              .includes(searchString.toLowerCase())
+                          ).length}
+                    </span>
+                  </h2>
 
-                <div className="space-y-2">
-                  {todos.map((todo, index) => {
-                    if (
-                      searchString &&
-                      !todo.title
-                        .toLowerCase()
-                        .includes(searchString.toLowerCase())
-                    )
-                      return null;
+                  <div className="space-y-2">
+                    {todos.map((todo, index) => {
+                      if (
+                        searchString &&
+                        !todo.title
+                          .toLowerCase()
+                          .includes(searchString.toLowerCase())
+                      )
+                        return null;
 
-                    return (
-                      <Draggable
-                        key={todo.$id}
-                        draggableId={todo.$id}
-                        index={index}
+                      return (
+                        <Draggable
+                          key={todo.$id}
+                          draggableId={todo.$id}
+                          index={index}
+                        >
+                          {(provided) => (
+                            <TodoCard
+                              todo={todo}
+                              index={index}
+                              id={id}
+                              innerRef={provided.innerRef}
+                              draggableProps={provided.draggableProps}
+                              dragHandleProps={provided.dragHandleProps}
+                            />
+                          )}
+                        </Draggable>
+                      );
+                    })}
+                    {/* GIVES THE SPACE WHEN WE ARE MOVING THE CARD */}
+                    {provided.placeholder}
+                    <div className="flex items-end justify-end">
+                      <button
+                        className="text-green-500 hover:text-green-600"
+                        onClick={handleOpenModal}
                       >
-                        {(provided) => (
-                          <TodoCard
-                            todo={todo}
-                            index={index}
-                            id={id}
-                            innerRef={provided.innerRef}
-                            draggableProps={provided.draggableProps}
-                            dragHandleProps={provided.dragHandleProps}
-                          />
-                        )}
-                      </Draggable>
-                    );
-                  })}
-                  {/* GIVES THE SPACE WHEN WE ARE MOVING THE CARD */}
-                  {provided.placeholder}
-                  <div className="flex items-end justify-end">
-                    <button className="text-green-500 hover:text-green-600">
-                      <PlusCircleIcon className="h-10 w-10" />
-                    </button>
+                        <PlusCircleIcon className="h-10 w-10" />
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-          </Droppable>
-        </div>
-      )}
-    </Draggable>
+              )}
+            </Droppable>
+          </div>
+        )}
+      </Draggable>
+    </>
   );
 };
 

@@ -51,7 +51,6 @@ function Header() {
             -z-50
           "
         />
-
         <Image
           src="https://links.papareact.com/c2cdd5"
           alt="Trello logo"
