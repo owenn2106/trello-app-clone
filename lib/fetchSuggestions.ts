@@ -12,8 +12,12 @@ export const fetchSuggestions = async (board: Board) => {
     body: JSON.stringify({ todos }),
   });
 
-  const GPTData = await response.json();
-  const { content } = GPTData;
+  if (response.status === 200) {
+    const GPTData = await response.json();
+    const { content } = GPTData;
 
-  return content;
+    return content;
+  } else {
+    return null;
+  }
 };

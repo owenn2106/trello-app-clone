@@ -1,4 +1,5 @@
 import "./globals.css";
+import AddCardModal from "@/components/AddCardModal";
 
 export const metadata = {
   title: "Trello App Clone",
@@ -12,7 +13,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-[#F5F6F8]">{children}</body>
+      <body className="bg-[#F5F6F8]">
+        {children}
+        <AddCardModal />
+      </body>
     </html>
   );
 }
